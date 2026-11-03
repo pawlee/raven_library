@@ -1,0 +1,109 @@
+core: null
+templates: null
+traits:
+    due:
+        type: date
+    priority:
+        default: medium
+        type: enum
+        values:
+            - low
+            - medium
+            - high
+    todo:
+        default: todo
+        type: enum
+        values:
+            - todo
+            - done
+types:
+    issue:
+        default_path: issues/
+        description: A repository-linked work item with queryable status and links to planning docs and blockers
+        fields:
+            blocked_by:
+                description: Issues that must be completed first
+                target: issue
+                type: ref[]
+            name:
+                required: true
+                type: string
+            parent:
+                description: PRD or planning document that spawned this issue
+                target: repo-doc
+                type: ref
+            repository:
+                description: The code repository this issue belongs to
+                required: true
+                target: repository
+                type: ref
+            status:
+                description: Current lifecycle state
+                required: true
+                type: enum
+                values:
+                    - draft
+                    - ready
+                    - in_progress
+                    - blocked
+                    - done
+                    - dropped
+        name_field: name
+    person:
+        default_path: person/
+        description: People and contacts
+        fields:
+            email:
+                description: Primary contact email
+                type: string
+            name:
+                required: true
+                type: string
+        name_field: name
+    project:
+        default_path: project/
+        fields:
+            name:
+                required: true
+                type: string
+        name_field: name
+    repo-doc:
+        default_path: repo-docs/
+        description: Repository-linked glossary, code map, convention, architecture note, decision, runbook, or PRD
+        fields:
+            kind:
+                description: Kind of repository reference document
+                required: true
+                type: enum
+                values:
+                    - glossary
+                    - code-map
+                    - conventions
+                    - decision
+                    - architecture
+                    - runbook
+                    - prd
+            name:
+                required: true
+                type: string
+            repository:
+                description: The code repository this document belongs to
+                required: true
+                target: repository
+                type: ref
+        name_field: name
+    repository:
+        default_path: repositories/
+        description: A code repository and its durable agent-facing context
+        fields:
+            name:
+                required: true
+                type: string
+            path:
+                description: Local filesystem path to the repository root
+                type: string
+            remote:
+                description: Canonical Git remote URL or SSH address for identifying the codebase
+                type: string
+        name_field: name
+version: 1

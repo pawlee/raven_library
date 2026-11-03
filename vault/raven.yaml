@@ -1,0 +1,34 @@
+directories:
+    daily: daily/
+    type: type/
+    page: page/
+    template: templates/
+auto_reindex: true
+queries:
+    all-issues:
+        query: type:issue sort(.status) sort(.name)
+        description: All work items, sorted by status and title
+    blocked-issues:
+        query: type:issue .status==blocked sort(.name)
+        description: Issues waiting on a dependency
+    due-soon:
+        query: trait:due oneof(.value, [today, tomorrow])
+        description: Items due today or tomorrow
+    open-issues:
+        query: type:issue oneof(.status,[draft,ready,in_progress,blocked]) sort(.status) sort(.name)
+        description: Issues not yet done or dropped
+    overdue:
+        query: trait:due .value<today
+        description: Items due before today
+    projects-with-todos:
+        query: type:project contains(trait:todo)
+        description: Projects that contain @todo traits anywhere in their content
+    ready-issues:
+        query: type:issue .status==ready sort(.name)
+        description: Approved issues ready to implement
+    repo-docs:
+        query: type:repo-doc sort(.kind) sort(.name)
+        description: Repository glossaries, code maps, conventions, decisions, runbooks, and PRDs
+    tasks:
+        query: trait:due
+        description: All tasks with due dates

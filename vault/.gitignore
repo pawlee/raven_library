@@ -1,0 +1,8 @@
+# Raven (auto-generated)
+# These are derived files - your markdown is the source of truth
+
+# Index database (rebuilt with 'rvn reindex')
+.raven/
+
+# Trashed files
+.trash/
