@@ -18,6 +18,24 @@ you want agents to use.
   of truth. This directory is not auto-discovered by OpenCode; copy its skill
   folders into the account-level skills directory as described below.
 
+## Install Raven
+https://github.com/aidanlsb/raven
+
+Install with Homebrew:
+
+```powershell
+brew tap aidanlsb/tap
+brew install aidanlsb/tap/rvn
+rvn version
+```
+
+Or install with Go:
+
+```powershell
+go install github.com/aidanlsb/raven/cmd/rvn@latest
+rvn version
+```
+
 ## Connect Raven to the vault
 
 Raven stores vault registrations in machine-level configuration, not in this

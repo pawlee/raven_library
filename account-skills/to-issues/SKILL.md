@@ -23,10 +23,9 @@ an external tracker.
 
 ## 2. Choose issue granularity
 
-Ask which model will implement the work: local or cloud API. If local and no
-size is given, assume 27–35B parameters. For local models, keep each issue to
+Ask for the size of vertical slices, small or large. If small, keep each issue to
 one focused behavior change with 2–4 acceptance criteria and a small set of
-verified navigation hints. For cloud models, a slice may cover several related
+verified navigation hints. For large, a slice may cover several related
 files and 4–7 criteria.
 
 ## 3. Draft vertical slices
