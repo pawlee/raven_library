@@ -56,6 +56,9 @@ the user stops.
   repository's Raven `repo-doc` with `kind=conventions`. Write it only after the
   user approves.
 - After the findings are handled, show a proposed `## Review` summary for the
-  issue object and update it in Raven after approval.
+  issue object and update it in Raven after approval. Before writing, read [the
+  shared Raven write recipe](../shared/RAVEN-WRITE-RECIPE.md), inspect the
+  current issue/conventions body, and preserve existing content in any full-body
+  replacement.
 - Do not create a local issue file, commit, tag, or mark the issue done unless
   the user explicitly asks and the work is actually complete.

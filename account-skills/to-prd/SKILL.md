@@ -27,9 +27,11 @@ gaps instead of inventing requirements.
 2. Identify the highest useful test seams. Prefer existing seams and keep the
    number small. Confirm the proposed seams with the user before writing.
 3. Present the proposed title and PRD content for approval.
-4. After approval, create a `repo-doc` with `kind=prd` and a `repository` ref to
-   the matched repository. Keep it in Raven; do not create `docs/prd/` files.
-   Use the returned `data.id` for later references.
+4. After approval, read [the shared Raven write recipe](../shared/RAVEN-WRITE-RECIPE.md)
+   and write a `repo-doc` with `kind=prd` and a `repository` ref containing the
+   matched repository's plain canonical ID. Use `--content-file` for the whole
+   PRD body. Keep it in Raven; do not create `docs/prd/` files. Use the returned
+   `data.id` for later references.
 
 ## PRD body
 

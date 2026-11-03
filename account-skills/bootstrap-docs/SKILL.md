@@ -45,6 +45,9 @@ Capture only durable navigation information:
 Use exact paths and symbol names, and verify that they exist. Prefer a few
 high-signal routes over a directory-by-directory inventory. Do not infer
 conventions or requirements that the code and user have not established.
+Document configuration keys and paths, never credential values. If tracked
+credentials are discovered, omit their values and flag the file path and
+credential category separately.
 
 ## 3. Draft and save the code map
 
@@ -56,7 +59,10 @@ rather than creating a duplicate. If none exists, create a `repo-doc` with
 Include the Git commit inspected and the verification date in the document so
 future agents can judge staleness. Show the proposed map to the user before
 creating or replacing it. Save it with Raven commands and use the returned
-canonical `data.id`; do not create local documentation files.
+canonical `data.id`; do not create local documentation files. Before writing,
+read [the shared Raven write recipe](../shared/RAVEN-WRITE-RECIPE.md). Use
+`rvn write repo-doc` with `kind=code-map`, the plain canonical repository ID in
+the `repository` ref field, and `--content-file` for the complete map body.
 
 ## 4. Verify and hand off
 

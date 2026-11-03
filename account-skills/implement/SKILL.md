@@ -45,7 +45,12 @@ previous session.
   issue `done` only when its approved behavior is implemented and verified.
 - Add a concise `## Resolution` section to the issue body in Raven, including
   the behavior delivered and verification results. Include a commit hash only
-  if a commit exists.
+  if a commit exists. Before writing, read [the shared Raven write
+  recipe](../shared/RAVEN-WRITE-RECIPE.md) and inspect the existing issue body.
+  If using `rvn write`, include the complete updated body so the issue history,
+  acceptance criteria, and links are preserved; never replace the issue with
+  only the resolution text. If using the section fallback, check whether the
+  section already exists before creating or appending to it.
 - Update a code map, glossary, convention, or decision document only when the
   work reveals a durable fact; show proposed knowledge changes to the user
   before writing them.

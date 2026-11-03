@@ -46,6 +46,9 @@ If the code or Raven docs can answer a question, inspect them instead of asking.
 
 ## Save approved knowledge in Raven
 
+- Before any write, read [the shared Raven write recipe](../shared/RAVEN-WRITE-RECIPE.md).
+  Use the plain canonical repository ID for `ref` fields; reserve `[[...]]` for
+  Markdown references and RQL.
 - The glossary is a `repo-doc` with `kind=glossary`, linked to the matching
   repository. Keep it about domain language, not implementation details or
   scratch notes. Follow [CONTEXT-FORMAT.md](./CONTEXT-FORMAT.md).

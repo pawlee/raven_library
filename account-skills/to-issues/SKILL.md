@@ -44,16 +44,21 @@ the granularity and dependency relationships are right; iterate until approved.
 
 Create blockers before dependent issues. Set the required `repository` ref and
 `status=ready`; set `parent` to the PRD `repo-doc` and `blocked_by` to canonical
-IDs of blocking issues when applicable. Example:
+IDs of blocking issues when applicable. Before any writes, read
+[the shared Raven write recipe](../shared/RAVEN-WRITE-RECIPE.md). For each
+approved issue, confirm its type/title identity is not already occupied by an
+unrelated or completed issue; do not overwrite an existing resolution or
+review. Then write the complete issue body from a UTF-8 temp file:
 
 ```powershell
-rvn new issue "<issue title>" --field "repository=[[repositories/<repo-id>]]" --field status=ready --field "parent=[[repo-docs/<prd-id>]]" --vault <vault-name> --json
+rvn write issue "<issue title>" --field "repository=<canonical-repository-id>" --field status=ready --field "parent=<canonical-prd-id>" --content-file "<temp-file>" --json --vault "<vault-name>" --vault-path "<vault-path>"
 ```
 
 Use the returned `data.id` for all later links. Do not invent a numeric issue
-sequence or derive IDs from filenames. Raven's canonical object IDs and
-references connect the work. Put the complete behavior and acceptance criteria
-in the issue body:
+sequence or derive IDs from filenames. For `blocked_by` arrays, use
+`--fields-json` with the blocking issues' canonical IDs. Raven's canonical
+object IDs and references connect the work. Put the complete behavior and
+acceptance criteria in the issue body:
 
 ```md
 ## What to build

@@ -58,8 +58,9 @@ All durable project material remains Markdown in Raven:
   next action needs a formal issue.
 
 Issue IDs are Raven's canonical object IDs, not manually numbered filenames.
-Use the `data.id` returned by `rvn new` when writing references. The title is
-human-readable, and the repository/status fields make issues easy to list.
+Use the `data.id` returned by `rvn new` or `rvn write` for later references. For
+`ref` fields passed through `--field`, use that ID as a plain value, without
+`[[...]]`; use wikilinks in Markdown bodies and RQL queries.
 
 ### Common commands
 
@@ -84,12 +85,12 @@ rvn query blocked-issues --json
 # Filter to one repository; replace the ID with its canonical Raven ID
 rvn query 'type:issue .repository==[[repositories/<repo-id>]] sort(.status) sort(.name)' --json
 
-# Create a code map or glossary for an existing repository record
-rvn new repo-doc "Code map: <repo-name>" --field "repository=[[repositories/<repo-id>]]" --field kind=code-map --json
-rvn new repo-doc "Glossary: <repo-name>" --field "repository=[[repositories/<repo-id>]]" --field kind=glossary --json
+# Write a complete code map or glossary body from a UTF-8 temp file
+rvn write repo-doc "Code map: <repo-name>" --field kind=code-map --field "repository=<canonical-repo-id>" --content-file "<temp-file>" --json
+rvn write repo-doc "Glossary: <repo-name>" --field kind=glossary --field "repository=<canonical-repo-id>" --content-file "<temp-file>" --json
 
-# Create and update a formal issue
-rvn new issue "<issue title>" --field "repository=[[repositories/<repo-id>]]" --field status=ready --json
+# Write a complete issue body after confirming the title identity is intended
+rvn write issue "<issue title>" --field "repository=<canonical-repo-id>" --field status=ready --content-file "<temp-file>" --json
 rvn set <issue-id> --field status=in_progress --json
 
 # Validate the schema and vault content
@@ -104,9 +105,11 @@ Run `rvn query saved list --json` to see saved queries. Use `rvn query
 ## Account-level OpenCode skills
 
 The skill folders in `account-skills/` are the editable, Git-tracked source.
-Copy each whole folder—including its supporting files—into OpenCode's
-account-level `~/.agents/skills` directory. On Windows this is
-`%USERPROFILE%\.agents\skills`.
+Copy each whole skill folder—including its supporting files—and the `shared/`
+reference folder into OpenCode's account-level `~/.agents/skills` directory.
+On Windows this is `%USERPROFILE%\.agents\skills`. `shared/` contains common
+instructions, not another skill; Raven-writing skills read it relative to
+their skill directory.
 
 From PowerShell at the repository root:
 
