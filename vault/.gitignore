@@ -6,3 +6,8 @@
 
 # Trashed files
 .trash/
+
+# Do not commit user files
+daily/
+type/
+page/

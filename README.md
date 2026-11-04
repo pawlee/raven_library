@@ -213,6 +213,52 @@ only when a date is known. Keep actual personal identity numbers and secrets
 out of the vault, and follow any project-specific rule about customer
 information.
 
+## Working with todos
+
+Use `@todo` for a small action that belongs in the context of a meeting or
+project document. Put one action on each line, usually under `## Actions` in a
+meeting note:
+
+```md
+- @todo Ask Daniel about the integration workflow
+- @todo @due(2026-11-10) Send the meeting notes
+```
+
+In this vault, `todo` is a trait with two values: `todo` (the default, meaning
+open) and `done`. Completing an action changes the trait value to `done`; it
+does not create a separate `@done` trait. Use an `issue` instead when work
+needs its own status, blockers, or acceptance criteria. Issues can be linked to
+a project or repository, but neither link is required.
+
+The saved `meeting-todos` and `project-doc-todos` queries list todo traits in
+those locations, including completed ones. Add `.value==todo` to see only open
+actions:
+
+```powershell
+rvn query meeting-todos --json
+rvn query project-doc-todos --json
+rvn query 'trait:todo .value==todo' --json
+rvn query 'trait:todo .value==todo within(type:meeting)' --json
+rvn query 'trait:todo .value==todo within(type:project-doc)' --json
+```
+
+Trait-query results are individual actions. In `--json` output, use an item's
+`object_id` to read its source note or section, and its `id` to update the
+action:
+
+```powershell
+rvn read '<object_id-from-result>' --raw --json
+rvn update '<trait-id-from-result>' done --json
+```
+
+For bulk completion, first preview the matching open actions, then add
+`--confirm` only after reviewing the preview:
+
+```powershell
+rvn query 'trait:todo .value==todo within(type:meeting)' --apply 'update done' --json
+rvn query 'trait:todo .value==todo within(type:meeting)' --apply 'update done' --confirm --json
+```
+
 Useful searches:
 
 ```powershell
@@ -220,14 +266,14 @@ rvn query 'type:project-doc .project==[[project/bky-integration]]' --json
 rvn query 'type:meeting .project==[[project/bky-integration]] sort(.date, desc)' --json
 rvn query 'type:meeting refs([[issues/<issue-id>]])' --json
 rvn query 'type:issue .project==[[project/bky-integration]] sort(.status) sort(.name)' --json
-rvn query 'type:project-doc .project==[[project/bky-integration]] contains(trait:todo)' --json
+rvn query 'type:project-doc .project==[[project/bky-integration]] contains(trait:todo .value==todo)' --json
 rvn search "BKY SOAP API" --json
 ```
 
 The saved `meetings` query lists all meetings; `project-meetings` lists the
-project-linked subset. `meeting-todos`, `project-docs`, and
-`project-doc-todos` cover meeting tasks and project documents. Use `rvn search`
-for terms you do not yet know how to filter structurally.
+project-linked subset. `meeting-todos` and `project-doc-todos` include both open
+and completed actions; use the `.value==todo` filter for open ones. Use
+`rvn search` for terms you do not yet know how to filter structurally.
 
 ## Account-level OpenCode skills
 
