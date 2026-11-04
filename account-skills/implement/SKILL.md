@@ -15,8 +15,10 @@ previous session.
 1. Read `rvn vault list --json`. Resolve the issue in the selected shared vault
    using an explicit `--vault` or `--vault-path`.
 2. Read the issue and follow its `repository`, `parent`, and `blocked_by`
-   references. If the repository is not the current Git root/remote, stop and
-   ask rather than editing the wrong checkout.
+   references. This code-implementation workflow requires a repository link; if
+   the issue has none, ask which repository to associate before proceeding. If
+   its repository is not the current Git root/remote, stop and ask rather than
+   editing the wrong checkout.
 3. Read the matching repository's code map, glossary, conventions, architecture,
    and decisions. Use the map to find likely entry points; verify them against
    the current code. If commands or paths are stale, inspect the repository

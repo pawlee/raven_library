@@ -20,6 +20,21 @@ queries:
     overdue:
         query: trait:due .value<today
         description: Items due before today
+    meeting-todos:
+        query: trait:todo within(type:meeting)
+        description: Todo lines within meeting notes
+    meetings:
+        query: type:meeting sort(.date, desc)
+        description: All meetings, newest first
+    project-doc-todos:
+        query: trait:todo within(type:project-doc)
+        description: Todo lines within project documents
+    project-docs:
+        query: type:project-doc sort(.kind) sort(.name)
+        description: Project discovery notes, decisions, requirements, and runbooks
+    project-meetings:
+        query: type:meeting exists(.project) sort(.date, desc)
+        description: Meetings linked to a project, newest first
     projects-with-todos:
         query: type:project contains(trait:todo)
         description: Projects that contain @todo traits anywhere in their content

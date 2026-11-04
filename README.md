@@ -1,9 +1,9 @@
 # Raven Library
 
 This repository is the Git-backed home for a shared Raven vault and the source
-for account-level OpenCode skills. Repository-specific glossaries, code maps,
-decisions, PRDs, and issues live as Markdown in `vault/`; reusable agent
-workflows live in `account-skills/`.
+for account-level OpenCode skills. Project and repository records, people,
+documents, and issues live as Markdown in `vault/`; reusable agent workflows
+live in `account-skills/`.
 
 `raven_library` is the **vault host**, not a codebase that needs its own
 `repository` record. Add records only for the actual repositories whose context
@@ -64,16 +64,27 @@ All durable project material remains Markdown in Raven:
 
 - **`repository`** — one record per actual codebase, identified by its local
   `path` and, when available, Git `remote`.
+- **`project`** — an initiative that can exist before its Git repository is
+  chosen. Its optional `contacts` reference list links to `person` records; its
+  optional `repositories` reference list can be populated later.
+- **`person`** — a reusable contact record with a name and optional email.
+- **`project-doc`** — a Markdown document linked to a project, independent of
+  any repository. Its `kind` distinguishes `overview`, `discovery`,
+  `decision`, `requirements`, and `runbook`.
+- **`meeting`** — one Markdown record per meeting, with optional `date`,
+  `attendees`, a `project` link, and `issues` links. Meetings can exist without
+  a project.
 - **`repo-doc`** — a document tied to a repository. Its `kind` is one of
   `glossary`, `code-map`, `conventions`, `decision`, `architecture`, `runbook`,
   or `prd`. Its required `repository` reference keeps documents scoped to the
   right codebase.
-- **`issue`** — a work item with required `repository` and `status` fields,
-  plus optional `parent` and `blocked_by` references. Status is `draft`,
-  `ready`, `in_progress`, `blocked`, `done`, or `dropped`. Its Markdown body
-  holds the description and acceptance criteria.
-- Daily notes and the built-in `@todo` trait are for informal capture; not every
-  next action needs a formal issue.
+- **`issue`** — a work item with required `name` and `status`, and optional
+  `project`, `repository`, `parent`, and `blocked_by` references. Status is
+  `draft`, `ready`, `in_progress`, `blocked`, `done`, or `dropped`. Its Markdown
+  body holds the description and acceptance criteria.
+- Daily notes and the built-in `@todo` trait are for informal capture. Use an
+  `issue` when work needs its own status or dependencies; project and repository
+  links are optional.
 
 Issue IDs are Raven's canonical object IDs, not manually numbered filenames.
 Use the `data.id` returned by `rvn new` or `rvn write` for later references. For
@@ -91,6 +102,14 @@ explicitly.
 rvn query 'type:repository' --json
 rvn query repo-docs --json
 
+# Browse projects and project documents
+rvn query 'type:project' --json
+rvn query project-docs --json
+
+# Browse all meetings and the project-linked subset
+rvn query meetings --json
+rvn query project-meetings --json
+
 # Register an actual codebase (not the Raven Library host)
 rvn new repository "<repo-name>" --field "path=<git-root>" --field "remote=<git-remote>" --json
 
@@ -107,8 +126,9 @@ rvn query 'type:issue .repository==[[repositories/<repo-id>]] sort(.status) sort
 rvn write repo-doc "Code map: <repo-name>" --field kind=code-map --field "repository=<canonical-repo-id>" --content-file "<temp-file>" --json
 rvn write repo-doc "Glossary: <repo-name>" --field kind=glossary --field "repository=<canonical-repo-id>" --content-file "<temp-file>" --json
 
-# Write a complete issue body after confirming the title identity is intended
-rvn write issue "<issue title>" --field "repository=<canonical-repo-id>" --field status=ready --content-file "<temp-file>" --json
+# Write a complete issue body; optionally add project/repository refs when known
+rvn write issue "<issue title>" --field status=ready --content-file "<temp-file>" --json
+# Optional fields: --field "project=<project-id>" and/or --field "repository=<repo-id>"
 rvn set <issue-id> --field status=in_progress --json
 
 # Validate the schema and vault content
@@ -118,7 +138,96 @@ rvn check --json
 
 Run `rvn query saved list --json` to see saved queries. Use `rvn query
 <name> --json` to run one. The `all-issues`, `open-issues`, `ready-issues`,
-`blocked-issues`, and `repo-docs` queries are already defined in `vault/`.
+`blocked-issues`, `repo-docs`, `meetings`, `project-meetings`, `meeting-todos`,
+`project-docs`, and `project-doc-todos` queries are already defined in `vault/`.
+
+## Projects, contacts, meetings, and issues
+
+A project does not need a Git repository. Create the project first, then add
+people as reusable Raven `person` objects and link their canonical IDs through
+the project's `contacts` field. When the repository decision is made, create
+the repository record and add its ID to the project's `repositories` field.
+Never create a placeholder repository just to store project notes.
+
+For example, `rvn new project "<project name>" --json` creates a project hub;
+`rvn new person "<person name>" --field email=<work-email> --json` creates a
+contact. Use each command's returned `data.id` for references. To set `ref[]`
+fields such as `contacts`, `meeting.attendees`, or `meeting.issues`, use
+`--fields-json` with plain canonical IDs, not `[[...]]`. In PowerShell, if
+inline JSON is mangled, follow the temporary-script guidance in
+`account-skills/shared/RAVEN-WRITE-RECIPE.md`.
+
+Store project material as `project-doc` objects. For example, discovery notes
+use `kind=discovery`. Store each meeting as a `meeting` object, whether or not
+it belongs to a project. `project-doc` requires a project; `meeting.project` is
+optional, as are `meeting.issues` links. Issues can likewise have optional
+project and repository links. Reference fields use plain canonical Raven IDs in
+frontmatter/CLI fields; use `[[canonical-id]]` in the Markdown body. For a full
+document, use `rvn write --content-file` as described in the shared Raven write
+recipe.
+
+```powershell
+rvn write project-doc "<project> Discovery" --field "project=<project-id>" --field kind=discovery --content-file "<temp-file>" --json
+rvn write meeting "<project> 2026-11-04 Meeting topic" --field "project=<project-id>" --field date=2026-11-04 --content-file "<temp-file>" --json
+rvn write meeting "2026-11-04 Team sync" --field date=2026-11-04 --content-file "<temp-file>" --json
+```
+
+Set meeting `attendees` and `issues` with `--fields-json` when creating or
+updating the note, using the IDs returned by Raven. `project` is a single
+optional reference and can be passed as `--field "project=<project-id>"`. If
+the body also links attendees/issues with `[[person/<id>]]` or `[[issues/<id>]]`,
+those links provide human-readable backlinks.
+
+Create one meeting document per meeting. A useful body template is:
+
+```md
+# <Meeting topic>
+
+## Purpose
+
+## Project (if relevant)
+- [[project/<canonical-project-id>]]
+
+## Issues (if relevant)
+- [[issues/<canonical-issue-id>]]
+
+## Attendees
+- [[person/<canonical-person-id>]]
+
+## Discussion
+
+## Decisions
+
+## Actions
+- @todo <action>
+
+## Open questions
+
+## Related documents
+- [[project-docs/<canonical-document-id>]]
+```
+
+Use the `attendees` reference field as well as body links when you want to query
+meetings by participant. Put only agreed actions in `@todo` lines; add `@due`
+only when a date is known. Keep actual personal identity numbers and secrets
+out of the vault, and follow any project-specific rule about customer
+information.
+
+Useful searches:
+
+```powershell
+rvn query 'type:project-doc .project==[[project/bky-integration]]' --json
+rvn query 'type:meeting .project==[[project/bky-integration]] sort(.date, desc)' --json
+rvn query 'type:meeting refs([[issues/<issue-id>]])' --json
+rvn query 'type:issue .project==[[project/bky-integration]] sort(.status) sort(.name)' --json
+rvn query 'type:project-doc .project==[[project/bky-integration]] contains(trait:todo)' --json
+rvn search "BKY SOAP API" --json
+```
+
+The saved `meetings` query lists all meetings; `project-meetings` lists the
+project-linked subset. `meeting-todos`, `project-docs`, and
+`project-doc-todos` cover meeting tasks and project documents. Use `rvn search`
+for terms you do not yet know how to filter structurally.
 
 ## Account-level OpenCode skills
 

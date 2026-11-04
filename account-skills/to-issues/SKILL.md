@@ -41,9 +41,12 @@ the granularity and dependency relationships are right; iterate until approved.
 
 ## 4. Create approved issues
 
-Create blockers before dependent issues. Set the required `repository` ref and
-`status=ready`; set `parent` to the PRD `repo-doc` and `blocked_by` to canonical
-IDs of blocking issues when applicable. Before any writes, read
+Create blockers before dependent issues. For this repository-specific workflow,
+set the matched `repository` ref and `status=ready`; set `parent` to the PRD
+`repo-doc` and `blocked_by` to canonical IDs of blocking issues when applicable.
+The broader schema also allows standalone or project-linked issues without a
+repository; this workflow intentionally creates repository-specific issues.
+Before any writes, read
 [the shared Raven write recipe](../shared/RAVEN-WRITE-RECIPE.md). For each
 approved issue, confirm its type/title identity is not already occupied by an
 unrelated or completed issue; do not overwrite an existing resolution or

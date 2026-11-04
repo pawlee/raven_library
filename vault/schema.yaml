@@ -19,7 +19,7 @@ traits:
 types:
     issue:
         default_path: issues/
-        description: A repository-linked work item with queryable status and links to planning docs and blockers
+        description: A work item with queryable status, optionally linked to a project and/or code repository
         fields:
             blocked_by:
                 description: Issues that must be completed first
@@ -32,9 +32,12 @@ types:
                 description: PRD or planning document that spawned this issue
                 target: repo-doc
                 type: ref
+            project:
+                description: The project this issue belongs to, when applicable
+                target: project
+                type: ref
             repository:
-                description: The code repository this issue belongs to
-                required: true
+                description: The code repository this issue belongs to, when applicable
                 target: repository
                 type: ref
             status:
@@ -48,6 +51,29 @@ types:
                     - blocked
                     - done
                     - dropped
+        name_field: name
+    meeting:
+        default_path: meeting/
+        description: A meeting note, optionally related to a project and issues
+        fields:
+            attendees:
+                description: People who attended or participated in the meeting
+                target: person
+                type: ref[]
+            date:
+                description: Date of the meeting
+                type: date
+            issues:
+                description: Issues discussed or followed up in the meeting
+                target: issue
+                type: ref[]
+            name:
+                required: true
+                type: string
+            project:
+                description: The project this meeting is related to, when applicable
+                target: project
+                type: ref
         name_field: name
     person:
         default_path: person/
@@ -63,9 +89,43 @@ types:
     project:
         default_path: project/
         fields:
+            contacts:
+                description: People associated with this project
+                target: person
+                type: ref[]
             name:
                 required: true
                 type: string
+            repositories:
+                description: Code repositories that implement this project; may be linked after the repository decision
+                target: repository
+                type: ref[]
+        name_field: name
+    project-doc:
+        default_path: project-docs/
+        description: Documents belonging to a project, independent of any Git repository
+        fields:
+            date:
+                description: Date relevant to this document
+                type: date
+            kind:
+                description: Kind of project document
+                required: true
+                type: enum
+                values:
+                    - overview
+                    - discovery
+                    - decision
+                    - requirements
+                    - runbook
+            name:
+                required: true
+                type: string
+            project:
+                description: The project this document belongs to
+                required: true
+                target: project
+                type: ref
         name_field: name
     repo-doc:
         default_path: repo-docs/

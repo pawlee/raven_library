@@ -12,6 +12,9 @@ and secret handling stay consistent.
   `repository=repositories/tracs_flow`. Do **not** wrap a `--field` ref value
   in `[[...]]`. Use `[[canonical-id]]` in Markdown body references and RQL
   expressions.
+- For a `ref[]` field such as `project.contacts`, `meeting.attendees`,
+  `meeting.issues`, or `issue.blocked_by`, use `--fields-json` with an array of
+  plain canonical ID strings.
 - Select the vault explicitly. If supplying both `--vault` and `--vault-path`,
   verify they identify the same vault; `--vault-path` takes precedence.
   Never change active/default vault routing as a side effect of a document
@@ -61,6 +64,12 @@ only if needed to diagnose a failed Raven operation.
 
 If the short CLI command itself returns an `rvn` error, report that separately
 and follow the error details; do not confuse it with the scanner message.
+
+For `--fields-json` arrays, if PowerShell strips the JSON quotes and Raven
+returns `invalid --fields-json JSON`, do not keep retrying the inline command.
+Place the short `rvn` call in a temporary `.cmd`/`.ps1` file under the approved
+temp directory, run that file, and remove it afterward. Keep the Git-backed
+document body in its separate `--content-file`.
 
 ## Fallback: build the document section by section
 
