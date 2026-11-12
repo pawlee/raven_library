@@ -275,23 +275,48 @@ project-linked subset. `meeting-todos` and `project-doc-todos` include both open
 and completed actions; use the `.value==todo` filter for open ones. Use
 `rvn search` for terms you do not yet know how to filter structurally.
 
-## Account-level OpenCode skills
+## OpenCode skills
 
 The skill folders in `account-skills/` are the editable, Git-tracked source.
-Copy each whole skill folder—including its supporting files—and the `shared/`
-reference folder into OpenCode's account-level `~/.agents/skills` directory.
-On Windows this is `%USERPROFILE%\.agents\skills`. `shared/` contains common
-instructions, not another skill; Raven-writing skills read it relative to
-their skill directory.
+`shared/` contains common instructions, not another skill; Raven-writing skills
+read it relative to their skill directory.
 
-From PowerShell at the repository root:
+OpenCode config example (note "skills" property to add the skills folder) (normally in `%USERPROFILE%\.config\opencode\opencode.jsonc`):
 
-```powershell
-$source = (Resolve-Path .\account-skills).Path
-$target = Join-Path $HOME '.agents\skills'
-New-Item -ItemType Directory -Path $target -Force | Out-Null
-Get-ChildItem $source -Directory | ForEach-Object {
-  Copy-Item -Path $_.FullName -Destination $target -Recurse -Force
+```opencode.jsonc
+{
+  "$schema": "https://opencode.ai/config.json",
+  "permissions": [
+    { "action": "shell", "resource": "*", "effect": "ask" },
+    { "action": "shell", "resource": "rvn *", "effect": "allow" },
+    { "action": "shell", "resource": "git status *", "effect": "allow" },
+    { "action": "shell", "resource": "git diff *", "effect": "allow" },
+    { "action": "shell", "resource": "git log *", "effect": "allow" },
+    { "action": "shell", "resource": "git fetch *", "effect": "allow" },
+    { "action": "shell", "resource": "git rev-parse *", "effect": "allow" },
+    { "action": "shell", "resource": "git remote get-url *", "effect": "allow" },
+    { "action": "shell", "resource": "git branch --show-current *", "effect": "allow" },
+    { "action": "shell", "resource": "git blame *", "effect": "allow" },
+    { "action": "shell", "resource": "git tag --list *", "effect": "allow" },
+    { "action": "shell", "resource": "git show *", "effect": "allow" },
+    { "action": "shell", "resource": "flutter *", "effect": "allow" },
+    { "action": "shell", "resource": "Select-String *", "effect": "allow" },
+    { "action": "shell", "resource": "Select-Object *", "effect": "allow" },
+    { "action": "read", "resource": "*", "effect": "allow" },
+    { "action": "read", "resource": "*.env", "effect": "ask" },
+    { "action": "read", "resource": "*.config", "effect": "ask" },
+    { "action": "external_directory", "resource": "*", "effect": "ask" }
+  ],
+  "skills": [
+    "C:/path/to/repo/account-skills"
+  ],
+  "mcp": {
+    "azure-devops": {
+      "type": "local",
+      "command": ["npx", "-y", "@azure-devops/mcp", "triona"],
+      "enabled": true
+    }
+  }
 }
 ```
 
