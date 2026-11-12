@@ -1,7 +1,7 @@
 # Raven Library
 
-This repository is the Git-backed home for a shared Raven vault and the source
-for account-level OpenCode skills. Project and repository records, people,
+This repository is the Git-backed home for a shared Raven vault (github.com/aidanlsb/raven) and the source
+for agent skills (adapted from https://github.com/mattpocock/skills). Project and repository records, people,
 documents, and issues live as Markdown in `vault/`; reusable agent workflows
 live in `account-skills/`.
 
